@@ -9,69 +9,34 @@ public class AsignaturaPresencial extends Asignatura { //EXTENDS HEREDA DE ASIGN
 
     public AsignaturaPresencial(int practicas, String id, String nombre) throws MyException {
         super(id, nombre);
-        setPracticas(practicas);
+        setPractica(practicas);
         this.notas = new float[practicas]; //INICIALIZO EL ARRAY EN EL CONTRUCTOR, Y LE ASIGNO DIRECTAMENTE LA CANTIDAD DE NOTAS//
     }
-
+    
     /**
-     * VALIDA QUE LA NOTA INTRODUCIDA NO SEA NULL Y SEA UN FLOAT, ADEMAS PASA EL
-     * STRING A FLOAT, DEVUELVE UNA EXCEPTION SI NO SE PUEDE CASTEAR A FLOAT
+     * VERIFICA QUE LA NOTA SEA ENTRE 1 Y 10, SI NO CUMPLE ESTA CONDICION
+     * CONDICION DEVUELVE UNA EXCEPTION, Y SI LA CUMPLE DEVUELVE LA NOTA VALIDA
      *
-     *
-     * @return int numPracticas
-     */
-    public float testNotas(String notas) throws MyException {
-        float nota = 0;
-        if (notas != null) {
-            try {
-                nota = Float.parseFloat(notas); //PASA DE STRING A FLOAT//
-            } catch (NumberFormatException exc) {
-                throw new MyException("Debes introducir una nota valida (1,0-10,0)");
-            }
-
-        }
-        return nota;
-    }
-
-    /**
-     * AGREGA TODAS LAS NOTAS, SI NO ESTAN DENTRO DE PARAMETRO INDICADO
-     * INTRODUCE UN CERO
-     *
-     * @param float nota
      * @param int practicas
+     * @throws MyException
      */
-    public void agregaNota(float nota, int practicas) {
-        for (int i = 0; i < practicas; i++) {
-            if (nota >= 1 && nota <= 10) {
-                notas[i] = nota;
-
-            } else {
-                notas[i] = 0;
-            }
+    public float validaNota(float nota) throws MyException {
+        if (nota >= 1 && nota <= 10) {
+            return nota;
+        } else {
+            throw new MyException("La nota introducida, no es valida (1-10)");
         }
-
     }
-
+    
     /**
-     * VALIDA QUE LA PRACTICA INTRODUCIDA NO SEA NULL Y SEA UN NUMERO, ADEMAS
-     * PASA EL STRING A INT, DEVUELVE UNA EXCEPTION SI NO SE PUEDE PASAR A INT
-     *
-     *
-     * @return int numPracticas
+     * AGREGA NOTA YA VALIDADA EN LA POSICION INTRODUCIDA DEL ARRAY
+     * @param float nota
+     * @param int posicion 
      */
-    public int testPracticas(String practicas) throws MyException {
-        int numPracticas = 0;
-        if (practicas != null) {
-            try {
-                numPracticas = Integer.parseInt(practicas); //PASA DE STRING A INT//
-            } catch (NumberFormatException exc) {
-                throw new MyException("Debes introducir el (NUMERO) de practicas");
-            }
-
-        }
-        return numPracticas;
+    public void agregaNota (float nota, int posicion ){
+        notas[posicion] = nota;
     }
-
+    
     //SETTERS//
     /**
      * VERIFICA QUE LAS PRACTICAS ESTEN ENTRE 1 Y 14, SI NO CUMPLE ALGUNA
@@ -80,9 +45,9 @@ public class AsignaturaPresencial extends Asignatura { //EXTENDS HEREDA DE ASIGN
      * @param int practicas
      * @throws MyException
      */
-    public void setPracticas(int practicas) throws MyException {
-        if (practicas >= 1 && practicas <= 14) {
-            this.practicas = practicas;
+    public void setPractica(int practica) throws MyException {
+        if (practica >= 1 && practica <= 14) {
+            this.practicas = practica;
         } else {
             throw new MyException("La cantidad de practicas, no es valida (1-14)");
         }

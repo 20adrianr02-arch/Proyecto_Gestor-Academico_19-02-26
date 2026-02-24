@@ -2,37 +2,17 @@ package modelo;
 
 import exception.MyException;
 
-public class AsiganturaEmpresa extends Asignatura {
+public class AsignaturaEmpresa extends Asignatura {
 
     private String nombreEmpresa;
     private float notaFinal;
 
-    public AsiganturaEmpresa(String nombreEmpresa, float notaFinal, String id, String nombre) throws MyException {
+    public AsignaturaEmpresa(String nombreEmpresa, float notaFinal, String id, String nombre) throws MyException {
         super(id, nombre);
         setNombreEmpresa(nombreEmpresa);
         setNotaFinal(notaFinal);
     }
     
-    /**
-     * VALIDA QUE LA NOTAFINAL INTRODUCIDA NO SEA NULL Y SEA UN FLOAT, ADEMAS
-     * PASA EL STRING A FLOAT, DEVUELVE UNA EXCEPTION SI NO SE PUEDE CASTEAR A
-     * FLOAT
-     *
-     *
-     * @return int numPracticas
-     */
-    public float testNotaFinal(String notas) throws MyException {
-        float notaFinal = 0;
-        if (notas != null) {
-            try {
-                notaFinal = Float.parseFloat(notas); //PASA DE STRING A FLOAT//
-            } catch (NumberFormatException exc) {
-                throw new MyException("Debes introducir una nota valida (1,0-10,0)");
-            }
-
-        }
-        return notaFinal;
-    }
 
     //SETTERS//
     /**
@@ -41,7 +21,7 @@ public class AsiganturaEmpresa extends Asignatura {
      * @throws MyException 
      */
     public void setNotaFinal(float notaFinal) throws MyException {
-        if (notaFinal > 0 && notaFinal < 10) {
+        if (notaFinal > 0 && notaFinal <= 10) {
             this.notaFinal = notaFinal;
         } else {
             throw new MyException("Nota final introducida no es valida");

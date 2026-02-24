@@ -3,7 +3,11 @@ package modelo;
 
 import exception.MyException;
 
-public abstract class Asignatura {
+public abstract class Asignatura implements Comparable<Asignatura>{
+    
+    //REGUX CONSTANTES PARA Y MEJORAR RENDIMIENTO//   
+    private static final String REGEX_ID = "^[a-zA-Z][a-zA-Z0-9]{3}$"; //VALIDA QUE EMPIECE POR UNA LETRA, Y QUE CONTENGA 3 CARACTERES, NO PUEDE SUPERAR MAS DE 4 DIGITOS// 
+    private static final String REGEX_NOMBRE = "^[A-Za-zñÑáéíóúÁÉÍÓÚ ]{1,20}$";//PERMITE SOLO LETRAS MAYUSCULAS Y MINUCULAS,TILDES,Ñ Y ESPACIOS.PERMITE ENTRE 1 Y 20 LETRAS
     
     private String id;
     private String nombre;
@@ -22,8 +26,7 @@ public abstract class Asignatura {
      * @throws MyException 
      */
     public void setId(String id) throws MyException {
-        String reguex = "^[a-zA-Z][a-zA-Z0-9]{3}$"; //VALIDA QUE EMPIECE POR UNA LETRA, Y QUE CONTENGA 3 CARACTERES, NO PUEDE SUPERAR MAS DE 4 DIGITOS// 
-        if(id != null && id.matches(reguex)){ //COMPRUEBA QUE EL ID CUMPLE CON LOS PARAMETROS DE REGUEX, SI LOS CUMPLE TRUE, SI NO FALSE//
+        if(id != null && id.matches(REGEX_ID)){ //COMPRUEBA QUE EL ID CUMPLE CON LOS PARAMETROS DE REGUEX, SI LOS CUMPLE TRUE, SI NO FALSE//
             this.id = id;
         }else {
             throw new MyException("El id de asignatura, no es valido");//MUESTRA AL USUARIO EL FALLO//
@@ -36,8 +39,7 @@ public abstract class Asignatura {
      * @throws MyException 
      */
     public void setNombre(String nombre) throws MyException {
-        String reguex = "^[A-Za-zñÑáéíóúÁÉÍÓÚ ]{1,20}$"; //PERMITE SOLO LETRAS MAYUSCULAS Y MINUCULAS,TILDES,Ñ Y ESPACIOS.PERMITE ENTRE 1 Y 20 LETRAS
-        if(nombre != null && nombre.matches(reguex)){ //TAMBIEN VERIFICA QUE NO SEA NULL
+        if(nombre != null && nombre.matches(REGEX_NOMBRE)){ //TAMBIEN VERIFICA QUE NO SEA NULL
             this.nombre = nombre;
         }else {
             throw new MyException("El nombre de asignatura, no es valido");
@@ -58,6 +60,15 @@ public abstract class Asignatura {
     public String toString() {
         return "Asignatura{" + "id=" + id + ", nombre=" + nombre + '}';
     }
+
+    @Override
+    public int compareTo(Asignatura otro) {
+        if (otro == null) {
+            return 1;
+        } // A LOS NULOS LOS MANDA AL FINAL DE LA LISTA //
+        return this.id.compareTo(otro.getId());
+    }
+    
     
     
     

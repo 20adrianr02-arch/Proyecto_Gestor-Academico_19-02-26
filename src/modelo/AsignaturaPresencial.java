@@ -29,12 +29,12 @@ public class AsignaturaPresencial extends Asignatura { //EXTENDS HEREDA DE ASIGN
     }
     
     /**
-     * AGREGA NOTA YA VALIDADA EN LA POSICION INTRODUCIDA DEL ARRAY
+     * AGREGA NOTA YA VALIDADA EN EL ARRAY
      * @param float nota
      * @param int posicion 
      */
-    public void agregaNota (float nota, int posicion ){
-        notas[posicion] = nota;
+    public void agregaNotaAsignatura (float nota, int posicion ) throws MyException{
+        notas[posicion] = validaNota(nota);
     }
     
     //SETTERS//

@@ -1,4 +1,3 @@
-
 package modelo;
 
 import exception.MyException;
@@ -6,10 +5,10 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public class Alumno {
-    
+
     //REGUEX COMO CONSTANTE PARA MEJORAR RENDIMIENTO//
-    private static final String REGEX_NOMBRE = "^[A-Za-zñÑáéíóúÁÉÍÓÚ ]{1,25}$";//PERMITE SOLO LETRAS MAYUSCULAS Y MINUCULAS,TILDES,Ñ Y ESPACIOS.PERMITE ENTRE 1 Y 25 LETRAS
-    
+    private static final String REGEX_NOMBRE = "^[A-Za-zñÑáéíóúÁÉÍÓÚ ]{2,25}$";//PERMITE SOLO LETRAS MAYUSCULAS Y MINUCULAS,TILDES,Ñ Y ESPACIOS.PERMITE ENTRE 1 Y 25 LETRAS
+
     private static int contador = 0;
     private String expediente;
     private String nombreAlumno;
@@ -20,10 +19,11 @@ public class Alumno {
         creaExpediente();
         listaAsiganturas = new TreeSet<Asignatura>();
     }
-    
+
     /**
-     * GENERA EL EXPEDIENTE DEL ALUMNO, CON EL CONTADOR INCREMNETAL CADA VEZ QUE SE CREA UN ALUMNO, EL EXPEDIENTE SE GENERA 
-     * CON LAS CONDICIONES ESTABLECIDAS POR EL ENUNCIADO MEDIENTE String.format();
+     * GENERA EL EXPEDIENTE DEL ALUMNO, CON EL CONTADOR INCREMNETAL CADA VEZ QUE
+     * SE CREA UN ALUMNO, EL EXPEDIENTE SE GENERA CON LAS CONDICIONES
+     * ESTABLECIDAS POR EL ENUNCIADO MEDIENTE String.format();
      */
     private void creaExpediente() {
         String expediente = String.format("ENLACES_%06d", this.contador); //STRING FORMAT, ENLACES_%06d ASI LE DOY FORMATO AL EXPIENDTE CON 6 CEROS Y LA d REPRESENTA LA VARIABLE// 
@@ -32,29 +32,47 @@ public class Alumno {
     }
 
     /**
-     * INTRODUCE EL NOMBRE, VALIDA QUE CUMPLA LAS RESTRICCIONES DEL REGUEX, Y DEVUELVE UNA EXCEPTION SI NO ES CORRECTO
+     * INTRODUCE EL NOMBRE, VALIDA QUE CUMPLA LAS RESTRICCIONES DEL REGUEX, Y
+     * DEVUELVE UNA EXCEPTION SI NO ES CORRECTO
+     *
      * @param String nombre
-     * @throws MyException 
+     * @throws MyException
      */
     public void setNombre(String nombre) throws MyException {
-        if(nombre != null && nombre.matches(REGEX_NOMBRE)){ //TAMBIEN VERIFICA QUE NO SEA NULL
+        if (nombre != null && nombre.matches(REGEX_NOMBRE)) { //TAMBIEN VERIFICA QUE NO SEA NULL
             this.nombreAlumno = nombre;
-        }else {
+        } else {
             throw new MyException("El nombre del alumno, no es valido");
         }
-        
+
     }
-   
+
     /**
-     * AGREGA LA ASIGATURA AL ARRAY DEVOLVIENDO UN TRUE, POR EL CONTRARIO, SI NO LA PUEDE AGREGAR (DUPLICADOS) DEVUELVE FALSE, ESTO LO RECIBIRA EL MAIN PARA NOTIFICAR AL USUARIO
+     * AGREGA LA ASIGATURA AL ARRAY DEVOLVIENDO UN TRUE, POR EL CONTRARIO, SI NO
+     * LA PUEDE AGREGAR (DUPLICADOS) DEVUELVE FALSE, ESTO LO RECIBIRA EL MAIN
+     * PARA NOTIFICAR AL USUARIO
+     *
      * @param Asignatur asignatura
-     * @return boolean 
+     * @return boolean
      */
-    public void llenaListaAsiganturas (Asignatura asignatura){
+    public void llenaListaAsiganturas(Asignatura asignatura) {
         listaAsiganturas.add(asignatura); //TRUE SI HA REALIZADO EL ADD Y FALSE SI HAY UN PROBLEMA (estan duplicados) Y NO LO PUDO AGREGAR//
     }
     
-    
+    /**
+     * BUSCA ASIGANATURA POR SU ID. MEDIENATE UN FOR EACH Y LA DEVUELVE 
+     * @param String id
+     * @return Asignatura
+     */
+    public Asignatura buscaAsignaturaPorId(String id) {
+        for (Asignatura asig : listaAsiganturas) {
+            if (asig.getId().equals(id)) {
+                return asig;
+            }
+        }
+        return null;
+    }
+
     //GETTERS//
     public String getExpediente() {
         return expediente;
@@ -72,7 +90,5 @@ public class Alumno {
     public String toString() {
         return "Nombre de alumno " + nombreAlumno + "\nExpediente = " + expediente + "\nListaAsiganturas=" + listaAsiganturas;
     }
-    
-    
-            
+
 }

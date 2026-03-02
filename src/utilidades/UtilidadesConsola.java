@@ -14,7 +14,5 @@ public class UtilidadesConsola {
         System.out.print(mensaje);
         return consola.nextLine();
     }
-    
-    
 
 }

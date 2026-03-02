@@ -2,6 +2,7 @@ package main;
 
 import exception.MyException;
 import gestor.Gestor;
+import java.util.Iterator;
 import java.util.Scanner;
 import modelo.Alumno;
 import modelo.AsignaturaEmpresa;
@@ -74,30 +75,68 @@ public class Main {
                     System.out.println("                ALTA ALUMNO               ");
                     System.out.println("==========================================");
                     try {
-                        Alumno A = Gestor.altaAlumno(UtilidadesConsola.pideStringConsola("<> Introduce nombre del alumno "));
-                        System.out.println(ANSI_VERDE + "[ALUMNO CREADO CON EXITO]" + ANSI_RESET);
-                        subMenuAltaAlumno();
-                        logicaSubMenu(pideOpcionSubMenu(), A); //SUBMENU//
+                        Alumno a = Gestor.altaAlumno(UtilidadesConsola.pideStringConsola("<> Introduce nombre del alumno: "));
+                        logicaSubMenu(a);
+                        salir = true;
                     } catch (MyException exc) {
                         System.out.println(ANSI_ROJO + "[ERROR] " + exc.getMessage() + ANSI_RESET);
                     }
                 }
             }
             case 2 -> {
+                System.out.println("\n==========================================");
+                System.out.println("              INGRESAR NOTA               ");
+                System.out.println("==========================================");
+                try {
+                    Alumno a = Gestor.buscaAlumno(UtilidadesConsola.pideStringConsola("Introduce el expediente del Alumno(ENLACES_XXXXXX): \n<> ")); //PIDE Y BUSCA EL ALUMNO POR EXPEDIENTE
+                    System.out.println(ANSI_VERDE + "[ALUMNO ENCONTRADO CON EXITO]" + ANSI_RESET + "\n");
+                    Iterator<Asignatura> it = a.getListaAsiganturas().iterator();//CREO EL ITERATOR Y LE ASIGNO LA COLECCION DE ASIGANTURAS//
+                    while (it.hasNext()) {
+                        Asignatura asig = it.next();//GUARDA LA ASIGANTURA DE LA COLECCION//
+                        if (asig instanceof AsignaturaPresencial) { //IDENTIFICO LAS PRESENCIALES DE LAS DE EMPRESA//
+                            System.out.println("Agrega las notas de asignatura " + asig.getNombre().toUpperCase() + " (total de practicas " + ((AsignaturaPresencial) asig).getPracticas() + ")");
+                            subeNotas((AsignaturaPresencial) asig); //CASTEO A PRESENCIAL, PARA PODER RECORRER EL ARRAY DE NOTAS//
+                            System.out.println(ANSI_VERDE + "[NOTAS DE " + asig.getNombre().toUpperCase() + " AGREGADAS CON EXITO] \n" + ANSI_RESET);
+                        } else if (asig instanceof AsignaturaEmpresa) {
+                            subeNotaFinal((AsignaturaEmpresa) asig); //CASTEO A EMPRESA
+                            System.out.println(ANSI_VERDE + "[NOTA FINAL DE " + asig.getNombre().toUpperCase() + " AGREGADA CON EXITO]\n" + ANSI_RESET);
+                        }
+                    }
+                } catch (MyException exc) {
+                    System.out.println(ANSI_ROJO + "[ERROR] " + exc.getMessage() + ANSI_RESET);
+                }
 
-                System.out.println("opcion2");
             }
+
             case 3 -> {
+                System.out.println("\n==========================================");
+                System.out.println("          INFORMACION DETALLADA           ");
+                System.out.println("==========================================");
+                try {
+                    Alumno a = Gestor.buscaAlumno(UtilidadesConsola.pideStringConsola("Introduce el expediente (ENLACES_XXXXXX): \n<>"));
+                    String informacionDetallada = Gestor.informacionAlumnoDetallada(a);
+                    System.out.println(informacionDetallada);
 
-                System.out.println("opcion3");
+                } catch (MyException exc) {
+                    System.out.println(ANSI_ROJO + "[ERROR] " + exc.getMessage() + ANSI_RESET);
+                }
+
             }
+
             case 4 -> {
-
-                System.out.println("opcion4");
+                System.out.println("\n==========================================");
+                System.out.println("              LISTADO GENERAL             ");
+                System.out.println("==========================================");
+                try {
+                    String listado = Gestor.informacionAlumnos();
+                    System.out.println(listado);
+                } catch (MyException exc) {
+                    System.out.println(ANSI_ROJO + "[ERROR] " + exc.getMessage() + ANSI_RESET);
+                }
             }
+            
             case 5 -> {
-
-                System.out.println("opcion5");
+                
             }
             case 6 -> {
 
@@ -106,15 +145,17 @@ public class Main {
 
         }
     }
-//                                                       javadoc
 
-    public static void subMenuAltaAlumno() {
+    /**
+     * MUESTRA EL SUBMENU POR CONSOLA
+     */
+    public static void subMenuAltaAlumno(Alumno A) {
 
         System.out.println("\n==========================================");
-        System.out.println("                ASIGNATURAS               ");
+        System.out.println("           ASIGNATURAS (" + A.getNombre().toUpperCase() + ")            ");
         System.out.println("==========================================");
-        System.out.println("  1. >Presencial");
-        System.out.println("  2. >Empresa");
+        System.out.println("  1. >Agregar asignatura presencial");
+        System.out.println("  2. >Agregar asignatura empresa");
         System.out.println("  3. >Salir de Asignatura \n");
         System.out.print("<> Selecciona una asignatura para el alumno: ");
 
@@ -138,79 +179,109 @@ public class Main {
         return opcion;
     }
 
-    public static void logicaSubMenu(int opcion, Alumno A) {
+    /**
+     * EJECUTA EL SWITCH Y EL WHILE DEL SUBMENU, PIDE EL ALIUMNO AL CUAL SE LE
+     * VAN A AGREGAR LAS ASIGANTURAS ADEMAS EJECUTA Y LLAMA A LAS FUNCIONES
+     * PERTIENENTES DE CADA CASO, INCLUYE LA LOGICA DE EJECUCION DEL MENU
+     *
+     * @param Alumno A
+     */
+    public static void logicaSubMenu(Alumno a) { //A PARA GUARDAR LAS ASIGNATURAS CREADAS EN LA COLECCION//
         boolean salir = false;
         while (!salir) {
-            switch (opcion) {
-                case 1 -> {
-
-                    System.out.println("\n==========================================");
-                    System.out.println("           ASIGNATURA PRESENCIAL          ");
-                    System.out.println("==========================================");
-                    String nombreAsignatura = UtilidadesConsola.pideStringConsola("<> Introduce el nombre de la Asignatura ");
-                    String id = UtilidadesConsola.pideStringConsola("<> Introduce el id de la Asignatura " + nombreAsignatura);
-                    String nombreEmpresa = UtilidadesConsola.pideStringConsola("<> Introduce el nombre de la Empresa ");
-                    String notaFinalString = UtilidadesConsola.pideStringConsola("<> Introduce la nota final ");
-                    try {
-                        float notaFinal = testNotaFinal(notaFinalString);
-                        Gestor.AltaAsiganaturaEmpresa(A, nombreEmpresa, notaFinal, id, nombreAsignatura);
-                    } catch (MyException exc) {
-                        System.out.println(ANSI_ROJO + "[ERROR] " + exc.getMessage() + ANSI_RESET);
-                    }
-                }
-
-                case 2 -> {
-                    boolean salirAE = false;
-                    while (!salirAE) {
+            subMenuAltaAlumno(a);
+            try {
+                int opcion = pideOpcionSubMenu();
+                switch (opcion) {
+                    case 1 -> {
                         System.out.println("\n==========================================");
-                        System.out.println("            ASIGNATURAS EMPRESA           ");
+                        System.out.println("           ASIGNATURA PRESENCIAL          ");
                         System.out.println("==========================================");
-                        int opcionSeguir = 0;
-                        System.out.println("Desea agregar asignatura a " + A.getNombre() + " ?");
-                        System.out.println("  1. >Si");
-                        System.out.println("  2. >No");
-                        System.out.print("<> Introduce una opcion : ");
+                        String nombreAsignatura = UtilidadesConsola.pideStringConsola("<> Introduce el nombre de la Asignatura: ");
+                        String id = UtilidadesConsola.pideStringConsola("<> Introduce el id de la Asignatura " + nombreAsignatura + ": ");
+                        String practicasString = UtilidadesConsola.pideStringConsola("<> Introduce la cantidad de practicas: ");
                         try {
-                            opcionSeguir = pideOpcionSeguir();
+                            int practicas = testPracticas(practicasString);
+                            AsignaturaPresencial ap1 = Gestor.AltaAsiganaturaPresencial(a, practicas, id, nombreAsignatura);
+                            System.out.println(ANSI_VERDE + "[ASIGNATURA AGREGADA CON EXITO]" + ANSI_RESET);
                         } catch (MyException exc) {
                             System.out.println(ANSI_ROJO + "[ERROR] " + exc.getMessage() + ANSI_RESET);
                         }
-                        if (opcionSeguir == 1) {
-                            String nombreAsignatura = UtilidadesConsola.pideStringConsola("<> Introduce el nombre de la Asignatura: ");
-                            String id = UtilidadesConsola.pideStringConsola("<> Introduce el id de la Asignatura " + nombreAsignatura + ": ");
-                            String nombreEmpresa = UtilidadesConsola.pideStringConsola("<> Introduce el nombre de la Empresa: ");
-                            String notaFinalString = UtilidadesConsola.pideStringConsola("<> Introduce la nota final: ");
-                            try {
-                                float notaFinal = testNotaFinal(notaFinalString);
-                                Gestor.AltaAsiganaturaEmpresa(A, nombreEmpresa, notaFinal, id, nombreAsignatura);
-                            } catch (MyException exc) {
-                                System.out.println(ANSI_ROJO + "[ERROR] " + exc.getMessage() + ANSI_RESET);
-                            }
-                        }else {
-                            salirAE = true;
-                        }
-                        
                     }
 
-                }
-                case 3 -> {
-                    salir = true;
+                    case 2 -> {
+                        System.out.println("\n==========================================");
+                        System.out.println("            ASIGNATURAS EMPRESA           ");
+                        System.out.println("==========================================");
+                        String nombreAsignatura = UtilidadesConsola.pideStringConsola("<> Introduce el nombre de la Asignatura: ");
+                        String id = UtilidadesConsola.pideStringConsola("<> Introduce el id de la Asignatura " + nombreAsignatura + ": ");
+                        String nombreEmpresa = UtilidadesConsola.pideStringConsola("<> Introduce el nombre de la Empresa: ");
+                        try {
+                            float notaFinal = 1;
+                            Gestor.AltaAsiganaturaEmpresa(a, nombreEmpresa, notaFinal, id, nombreAsignatura);
+                            System.out.println(ANSI_VERDE + "[ASIGNATURA AGREGADA CON EXITO]" + ANSI_RESET);
+                        } catch (MyException exc) {
+                            System.out.println(ANSI_ROJO + "[ERROR] " + exc.getMessage() + ANSI_RESET);
+                        }
 
+                    }
+                    case 3 -> {
+                        if (a.getListaAsiganturas().isEmpty()) { //SI LA COLECCION DE ASIGNATURAS ESTA VACIA, VUELVE A PEDIR UNA ASIGNATURA//
+                            throw new MyException("Debes matricular al menos una asignatura");
+                        }
+                        salir = true;
+
+                    }
                 }
+            } catch (MyException e) {
+                System.out.println(ANSI_ROJO + e.getMessage() + ANSI_RESET);
+            }
+
+        }
+    }
+
+    /**
+     * RECORRE EL ARRAY DE NOTAS DE ASIGNATURA PRESENCIAL, PIDE AL USUARIO LAS
+     * NOTAS POR CONSOLA Y SI NO SON CORRECTAS GESTIONA LA EXCEPTION
+     *
+     * @param AsignaturaPresencial as
+     */
+    public static void subeNotas(AsignaturaPresencial as) {
+        int i = 0;
+        int numPracticas = as.getPracticas();
+        while (i < numPracticas) {//UTILIZO UN WHILE, POR SI LA NOTA NO ES VALIDA, NO AVANCE LA POSICION//
+            try {
+                String notaString = UtilidadesConsola.pideStringConsola("<> Introduce nota para la practica N-" + (i + 1) + ": ");
+                float nota = testNotas(notaString);
+                as.agregaNotaAsignatura(nota, i);
+                System.out.println(ANSI_VERDE + "[NOTA " + (i + 1) + " REGISTRADA CON EXITO]" + ANSI_RESET + "\n");
+                i++;
+            } catch (MyException exc) {
+                System.out.println(ANSI_ROJO + "[ERROR] " + exc.getMessage() + ANSI_RESET);
             }
         }
     }
 
-    public static int pideOpcionSeguir() throws MyException {
-        int opcion = 0;
-        String opcionString = consola.nextLine();
-        if (opcionString != null && opcionString.matches(validaOpcionSeguir)) { 
-            opcion = Integer.parseInt(opcionString);
-        }else {
-            throw new MyException("Introduce una opcion valida (1-2)");
+    /**
+     * ASIGNA LA NOTA FINAL DE LA ASIGANTURA EMPRESA DEVUELVE UNA EXCEPTION SI
+     * HAY ALGUN FALLO, HASTA QUE LA NOTA FINAL, NO SEA CORRECTA NO SALE DEL
+     * BUCLE
+     *
+     * @param AsignaturaEmpresa as
+     * @param float notaFinal
+     */
+    public static void subeNotaFinal(AsignaturaEmpresa as) {
+        boolean correcto = false;
+        while (!correcto) {
+            try {
+                String notaString = UtilidadesConsola.pideStringConsola("<> Agrega la nota final de " + as.getNombre().toUpperCase() + ": ");
+                float nota = testNotaFinal(notaString);
+                as.setNotaFinal(nota);
+                correcto = true;
+            } catch (MyException exc) {
+                System.out.println(ANSI_ROJO + "[ERROR] " + exc.getMessage() + ANSI_RESET);
+            }
         }
-    
-        return opcion;
     }
 
     /**
@@ -267,7 +338,7 @@ public class Main {
             try {
                 notaFinal = Float.parseFloat(notas); //PASA DE STRING A FLOAT//
             } catch (NumberFormatException exc) {
-                throw new MyException("Debes introducir una nota valida (1,0-10,0)");
+                throw new MyException("Debes introducir una nota valida (1-10)");
             }
 
         }
@@ -287,5 +358,4 @@ public class Main {
         }
 
     }
-
 }

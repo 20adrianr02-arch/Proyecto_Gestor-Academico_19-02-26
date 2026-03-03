@@ -7,7 +7,7 @@ public abstract class Asignatura implements Comparable<Asignatura>{
     
     //REGUX CONSTANTES PARA Y MEJORAR RENDIMIENTO//   
     private static final String REGEX_ID = "^[a-zA-Z][a-zA-Z0-9]{3}$"; //VALIDA QUE EMPIECE POR UNA LETRA, Y QUE CONTENGA 3 CARACTERES, NO PUEDE SUPERAR MAS DE 4 DIGITOS// 
-    private static final String REGEX_NOMBRE = "^[A-Za-zñÑáéíóúÁÉÍÓÚ ]{1,20}$";//PERMITE SOLO LETRAS MAYUSCULAS Y MINUCULAS,TILDES,Ñ Y ESPACIOS.PERMITE ENTRE 1 Y 20 LETRAS
+    private static final String REGEX_NOMBRE = "^[A-Za-zñÑáéíóúÁÉÍÓÚ0-9 ]{1,20}$"; //PERMITE CARACTERES ENTRE 1 Y 20 LETRAS
     
     private String id;
     private String nombre;

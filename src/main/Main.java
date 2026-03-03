@@ -1,7 +1,7 @@
 package main;
 
 import exception.MyException;
-import gestor.Gestor;
+import gestor.GestorMatricula;
 import java.util.Iterator;
 import java.util.Scanner;
 import modelo.Alumno;
@@ -64,10 +64,9 @@ public class Main {
      *
      * @param opcion
      */
-    public static void logicaMenu(int opcion) {
-
+    public static boolean logicaMenu(int opcion) {
+        boolean salirMenu = false;
         switch (opcion) {
-
             case 1 -> {
                 boolean salir = false;
                 while (!salir) {
@@ -75,7 +74,7 @@ public class Main {
                     System.out.println("                ALTA ALUMNO               ");
                     System.out.println("==========================================");
                     try {
-                        Alumno a = Gestor.altaAlumno(UtilidadesConsola.pideStringConsola("<> Introduce nombre del alumno: "));
+                        Alumno a = GestorMatricula.altaAlumno(UtilidadesConsola.pideStringConsola("<> Introduce nombre del alumno: "));
                         logicaSubMenu(a);
                         salir = true;
                     } catch (MyException exc) {
@@ -88,7 +87,7 @@ public class Main {
                 System.out.println("              INGRESAR NOTA               ");
                 System.out.println("==========================================");
                 try {
-                    Alumno a = Gestor.buscaAlumno(UtilidadesConsola.pideStringConsola("Introduce el expediente del Alumno(ENLACES_XXXXXX): \n<> ")); //PIDE Y BUSCA EL ALUMNO POR EXPEDIENTE
+                    Alumno a = GestorMatricula.buscaAlumno(UtilidadesConsola.pideStringConsola("Introduce el expediente del Alumno(ENLACES_XXXXXX): \n<> ")); //PIDE Y BUSCA EL ALUMNO POR EXPEDIENTE
                     System.out.println(ANSI_VERDE + "[ALUMNO ENCONTRADO CON EXITO]" + ANSI_RESET + "\n");
                     Iterator<Asignatura> it = a.getListaAsiganturas().iterator();//CREO EL ITERATOR Y LE ASIGNO LA COLECCION DE ASIGANTURAS//
                     while (it.hasNext()) {
@@ -113,8 +112,8 @@ public class Main {
                 System.out.println("          INFORMACION DETALLADA           ");
                 System.out.println("==========================================");
                 try {
-                    Alumno a = Gestor.buscaAlumno(UtilidadesConsola.pideStringConsola("Introduce el expediente (ENLACES_XXXXXX): \n<>"));
-                    String informacionDetallada = Gestor.informacionAlumnoDetallada(a);
+                    Alumno a = GestorMatricula.buscaAlumno(UtilidadesConsola.pideStringConsola("Introduce el expediente (ENLACES_XXXXXX): \n<>"));
+                    String informacionDetallada = GestorMatricula.informacionAlumnoDetallada(a);
                     System.out.println(informacionDetallada);
 
                 } catch (MyException exc) {
@@ -128,22 +127,32 @@ public class Main {
                 System.out.println("              LISTADO GENERAL             ");
                 System.out.println("==========================================");
                 try {
-                    String listado = Gestor.informacionAlumnos();
+                    String listado = GestorMatricula.informacionAlumnos();
                     System.out.println(listado);
                 } catch (MyException exc) {
                     System.out.println(ANSI_ROJO + "[ERROR] " + exc.getMessage() + ANSI_RESET);
                 }
             }
-            
-            case 5 -> {
-                
-            }
-            case 6 -> {
 
-                System.out.println("SALIR");
+            case 5 -> {
+                System.out.println("\n==========================================");
+                System.out.println("                PROMOCIONAN               ");
+                System.out.println("==========================================");
+                try {
+                    System.out.println(GestorMatricula.obtenerAlumnosPromocionan());
+                } catch (MyException exc) {
+                    System.out.println(ANSI_ROJO + "[ERROR] " + exc.getMessage() + ANSI_RESET);
+                }
+
+            }
+
+            case 6 -> {
+                System.out.println("\u001B[31m[SALISTE DEL PROGRAMA]\u001B[0m");
+                salirMenu = true;
             }
 
         }
+        return salirMenu;
     }
 
     /**
@@ -202,7 +211,7 @@ public class Main {
                         String practicasString = UtilidadesConsola.pideStringConsola("<> Introduce la cantidad de practicas: ");
                         try {
                             int practicas = testPracticas(practicasString);
-                            AsignaturaPresencial ap1 = Gestor.AltaAsiganaturaPresencial(a, practicas, id, nombreAsignatura);
+                            AsignaturaPresencial ap1 = GestorMatricula.altaAsignaturaPresencial(a, practicas, id, nombreAsignatura);
                             System.out.println(ANSI_VERDE + "[ASIGNATURA AGREGADA CON EXITO]" + ANSI_RESET);
                         } catch (MyException exc) {
                             System.out.println(ANSI_ROJO + "[ERROR] " + exc.getMessage() + ANSI_RESET);
@@ -218,7 +227,7 @@ public class Main {
                         String nombreEmpresa = UtilidadesConsola.pideStringConsola("<> Introduce el nombre de la Empresa: ");
                         try {
                             float notaFinal = 1;
-                            Gestor.AltaAsiganaturaEmpresa(a, nombreEmpresa, notaFinal, id, nombreAsignatura);
+                            GestorMatricula.altaAsignaturaEmpresa(a, nombreEmpresa, notaFinal, id, nombreAsignatura);
                             System.out.println(ANSI_VERDE + "[ASIGNATURA AGREGADA CON EXITO]" + ANSI_RESET);
                         } catch (MyException exc) {
                             System.out.println(ANSI_ROJO + "[ERROR] " + exc.getMessage() + ANSI_RESET);
@@ -345,17 +354,79 @@ public class Main {
         return notaFinal;
     }
 
-    public static void main(String[] args) {
+    /**
+     * CREA 3 ALUMNOS DE PRUEBA DE FORMA MANUAL, COMO PIDE EL ENUNCIADO DEL
+     * PROYECTO
+     */
+    public static void creacionAlumnosPrueba() throws MyException {
+        //CREACION DE ALUMNOS//
+        Alumno alumno1 = GestorMatricula.altaAlumno("Pedro Fernandez");
+        Alumno alumno2 = GestorMatricula.altaAlumno("Sofia Rodriguez");
+        Alumno alumno3 = GestorMatricula.altaAlumno("Camila Motos");
 
+        //ASIGANCION DE ASIGNATURAS EMPRESA//
+        Asignatura alumno1_asig1 = new AsignaturaEmpresa("Hiberus", 7.7f, "P123", "Programacion");
+        alumno1.llenaListaAsiganturas(alumno1_asig1);
+
+        AsignaturaEmpresa alumno2_asig1 = new AsignaturaEmpresa("Hiberus", 9.4f, "P321", "Programacion");
+        alumno2.llenaListaAsiganturas(alumno2_asig1);
+
+        AsignaturaEmpresa alumno2_asig2 = new AsignaturaEmpresa("CAIXA", 8f, "B321", "Base de Datos");
+        alumno2.llenaListaAsiganturas(alumno2_asig2);
+
+        AsignaturaEmpresa alumno3_asig1 = new AsignaturaEmpresa("Hiberus", 3f, "P512", "Programacion");
+        alumno3.llenaListaAsiganturas(alumno3_asig1);
+
+        //ASIGANCION DE ASIGNATURAS PRESENCIAL//
+        AsignaturaPresencial alumno1_asig2 = new AsignaturaPresencial(5, "P523", "Programacion");
+        alumno1.llenaListaAsiganturas(alumno1_asig2);
+        alumno1_asig2.agregaNotaAsignatura(5, 0);
+        alumno1_asig2.agregaNotaAsignatura(6, 1);
+        alumno1_asig2.agregaNotaAsignatura(6, 2);
+        alumno1_asig2.agregaNotaAsignatura(3, 3);
+        alumno1_asig2.agregaNotaAsignatura(4, 4);
+
+        AsignaturaPresencial alumno1_asig3 = new AsignaturaPresencial(9, "P361", "Programacion");
+        alumno1.llenaListaAsiganturas(alumno1_asig3);
+        alumno1_asig3.agregaNotaAsignatura(3, 0);
+        alumno1_asig3.agregaNotaAsignatura(7, 1);
+        alumno1_asig3.agregaNotaAsignatura(5, 2);
+        alumno1_asig3.agregaNotaAsignatura(4, 3);
+        alumno1_asig3.agregaNotaAsignatura(9, 4);
+        alumno1_asig3.agregaNotaAsignatura(3, 5);
+        alumno1_asig3.agregaNotaAsignatura(2, 6);
+        alumno1_asig3.agregaNotaAsignatura(7, 7);
+        alumno1_asig3.agregaNotaAsignatura(8, 8);
+
+        AsignaturaPresencial alumno2_asig3 = new AsignaturaPresencial(4, "B751", "Base de Datos");
+        alumno2.llenaListaAsiganturas(alumno2_asig3);
+        alumno2_asig3.agregaNotaAsignatura(5, 0);
+        alumno2_asig3.agregaNotaAsignatura(9, 1);
+        alumno2_asig3.agregaNotaAsignatura(6, 2);
+        alumno2_asig3.agregaNotaAsignatura(7, 3);
+
+        AsignaturaPresencial alumno3_asig2 = new AsignaturaPresencial(3, "P872", "Programacion");
+        alumno3.llenaListaAsiganturas(alumno3_asig2);
+        alumno3_asig2.agregaNotaAsignatura(3, 0);
+        alumno3_asig2.agregaNotaAsignatura(6, 1);
+        alumno3_asig2.agregaNotaAsignatura(8, 2);
+    }
+
+    public static void main(String[] args) {
         boolean salir = false;
-        while (!salir) {
+        try {
+            creacionAlumnosPrueba(); //CREACION DE ALUMNOS DE PRUEBA//
+        } catch (MyException ex) {
+            System.getLogger(Main.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+        }
+        while (!salir) { //FUNCIONAMIENTO DEL PROYECTO //
             menu();
             try {
-                logicaMenu(pideOpcion());
+                salir = logicaMenu(pideOpcion());
             } catch (MyException exc) {
                 System.out.println(ANSI_ROJO + "[ERROR] " + exc.getMessage());
             }
         }
-
     }
+
 }

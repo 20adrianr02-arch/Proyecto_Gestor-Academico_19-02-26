@@ -3,7 +3,7 @@ package modelo;
 import exception.MyException;
 
 public class AsignaturaEmpresa extends Asignatura {
-    private static String reguex = "^[A-Za-zñÑáéíóúÁÉÍÓÚ0-9 ]{1,20}$"; //PERMITE SOLO LETRAS MAYUSCULAS Y MINUCULAS,TILDES,Ñ Y ESPACIOS.PERMITE ENTRE 1 Y 20 LETRAS
+    private static final String REGUEX_NOMBRE_EMPRESA = "^[A-Za-zñÑáéíóúÁÉÍÓÚ0-9 ]{1,20}$"; //PERMITE SOLO LETRAS MAYUSCULAS Y MINUCULAS,TILDES,Ñ Y ESPACIOS.PERMITE ENTRE 1 Y 20 LETRAS
     private String nombreEmpresa;
     private float notaFinal;
 
@@ -21,7 +21,7 @@ public class AsignaturaEmpresa extends Asignatura {
      * @throws MyException 
      */
     public void setNotaFinal(float notaFinal) throws MyException {
-        if (notaFinal > 0 && notaFinal <= 10) {
+        if (notaFinal >= 0 && notaFinal <= 10) {
             this.notaFinal = notaFinal;
         } else {
             throw new MyException("Nota final introducida no es valida");
@@ -37,7 +37,7 @@ public class AsignaturaEmpresa extends Asignatura {
      * @throws MyException
      */
     public void setNombreEmpresa(String nombreEmpresa) throws MyException {
-        if (nombreEmpresa != null && nombreEmpresa.matches(this.reguex)) { //TAMBIEN VERIFICA QUE NO SEA NULL
+        if (nombreEmpresa != null && nombreEmpresa.matches(this.REGUEX_NOMBRE_EMPRESA)) { //TAMBIEN VERIFICA QUE NO SEA NULL
             this.nombreEmpresa = nombreEmpresa;
         } else {
             throw new MyException("El nombre de la empresa, no es valido");

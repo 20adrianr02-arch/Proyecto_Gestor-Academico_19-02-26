@@ -1,4 +1,4 @@
-#  Sistema de Gestión Académica (Java Avanzado)
+#  Sistema de Gestión Académica (Java)
 
 Aplicación backend desarrollada en **Java** para la gestión académica integral de un centro educativo.El sistema permite administrar alumnos, gestionar sus matrículas y procesar las calificaciones obtenidas en diferentes modalidades de asignaturas.
 
